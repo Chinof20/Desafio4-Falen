@@ -8,6 +8,7 @@ const app = express()
 const server = http.createServer(app)
 const io = new Server(server)
 
+
 app.engine("handlebars", handlebars.engine())
 app.set("views", __dirname + "/src/views")
 app.set("view engine", "handlebars")
@@ -20,21 +21,20 @@ app.get("/", (req,res)=>{
     res.render("index.hbs")
 })
 
-let products = []
+const contenedor = require('./src/contenedorProd')
 
-io.on("connection", (socket)=>{
+io.on("connection", async(socket)=>{
     console.log("Un cliente se ha conectado")
+
+    const productos = await contenedor.getAll()
+    socket.emit('products', productos)
+
     socket.on('newProduct', (product)=>{
-        const ultimoId = products.length > 0 ? products[products.length-1].id : 0
-        const nuevoId = ultimoId + 1
-        const nuevoProducto = {id: nuevoId, ...product}
-        products.push(nuevoProducto)
-        socket.emit('products', products)
+        contenedor.save(product)
     })
 
     socket.on('deleteProduct', (id)=>{
-        products = products.filter( (product)=> product.id !== Number(id))
-        socket.emit('products', products)
+        contenedor.deleteId(id)
     })
 
 })

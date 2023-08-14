@@ -20,7 +20,7 @@ function viewProducts(id, title, price){
     const productElement = document.createElement('div')
     productElement.innerHTML = `<strong>Producto:</strong> ${title} 
     <strong>Precio:</strong> ${price} 
-    <button class="delete" data-id="${id}"> X </button>
+    <button class="delete" data-id="${id}"> Eliminar </button>
     `
     productList.appendChild(productElement)
     const botonDelete = productElement.querySelector('.delete')
